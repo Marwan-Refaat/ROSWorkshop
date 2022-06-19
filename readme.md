@@ -16,6 +16,7 @@ This repo will currently contain all the planned content as well as any new file
 
 
 <br>
+
 ## Planned Course Content
 
 ### Unit 0 - Prerequisites
