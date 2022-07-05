@@ -5,7 +5,6 @@ This is a guide to get the nav2 turtlebot3 example up and running on ROS2 Foxy. 
 - Ubuntu 20.04
 - A working ROS2 Foxy Desktop installation (Follow [this guide](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html))
 - Git
-- rosdep2
 - colcon
 
 ## Installation Instructions
