@@ -29,7 +29,7 @@ These are topics  that all students need to have some familiarity with to allow 
     - How to navigate through repositories / Understand the general layout of repositories and how to navigate through commits
     - How to clone repositories using the command line or through the VS Code Github extension
 - **Linear Algebra** - `Work in Progress` , `Need Feedback`
-    - Necessary Linear Algebra topics for mobile robotics
+    - Necessary Linear Algebra topics for mobile robotics (i.e: Transforms and/or topics required to compute odometry information)
         - <mark>Matrices? (Do they need to understand specifics or just be familiar with them?)
 
 ### Unit 1 - Intro to ROS
@@ -46,7 +46,7 @@ This will be the first introduction to ROS and will cover the following:
 - **Milestone 1 :** - `Work in Progress`
     - Create a simple talker and listener nodes that can communicate through a shared topic
     
-### Unit 2 - The ROS Ecosystem -  `Work in Progress`
+### Unit 2 - The ROS Ecosystem*
 This unit should cover the ROS filesystem, how to download and install packages, and how to create your own simple package:
 - Introduction to the ROS Workspace
     - What are buildtools? 
@@ -58,16 +58,16 @@ This unit should cover the ROS filesystem, how to download and install packages,
 - Launch Files
     - What are launch files
     - How to use launch files (parametric launch files), edit launch files, and create custom launch files
-- Gazebo
+- Gazebo*
     - Introduction to Gazebo (What is it, why is it used)
     - ... ?
-- Rviz
+- Rviz*
     - Introduction to Rviz (What is it, why is it used)
     - ... ?
 - **Milestone 2** - `Work in Progress`
     - Install and use the Turtlebot3 Gazebo Simulation and operate using teleop
 
-### Unit 3 - SLAM
+### Unit 3 - SLAM*
 This unit will cover the use of the built-in ROS navigation stack to SLAM and navigate using Turtlebot3. This unit still needs time before its scope is fully defined as time is needed to practice and become familiar with the new navigation stack before the content can be outlined.
 
 
@@ -75,9 +75,8 @@ This unit will cover the use of the built-in ROS navigation stack to SLAM and na
 
 ## Course Preparation Timeline -  `Work in Progress`
 
-- **First Week of July**  - Finalized and Approved Course Outline
-- **Mid July** - Completed and Approved outlines for lectures
-- **First Week of August** - Completed and Approved Lectures
+- **First Week of August**  - Completed and Approved lecture outlines
+- **22 August** - Completed Lectures
 - **End of August** - Polished Lectures and Github Repo, Content Ready for teaching
 
 
