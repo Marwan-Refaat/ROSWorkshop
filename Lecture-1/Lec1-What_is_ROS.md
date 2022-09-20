@@ -1,31 +1,6 @@
 # Lecture 1: What is ROS?
+This lecture will serve as an introduction to ROS and its core concepts, as well as give you a little insight into why we will be using ROS specifically.
 
-Welcome to the first of three lectures that will take you through ROS2
-and all its core concepts. These lectures will cover all the core concepts that will enable you to create your own ROS2-enabled projects as well as work with any ROS-enabled robots. 
-
-The workshop is divided into three lectures:
- - ** Lecture 1: What is ROS? **
- 	- Overview of ROS
- 	- The history of ROS
- 	- Why ROS?
- - ** Lecture 2: Working with ROS **
- 	- The ROS Graph
- 	- ROS Actions 
- - ** Lecture 3: The ROS Ecosystem ** 
- 	- Managing ROS workspaces
- 	- Simulation with ROS 
- 	- Creating packages
-
-
-### Intended Learning Outcomes:
-By the end of this 3-day workshop,you should be able to: 
-- Develop custom ROS2 packages that include custom nodes, topics and actions using Python
--  Interact with and program ROS-enabled robots
-
-
-Now, onto the first lecture.
-
----
 ### Lecture Objectives
 By the end of this lecture you should be familiar with:
 - The abstracted overview of ROS
