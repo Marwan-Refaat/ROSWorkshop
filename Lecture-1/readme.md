@@ -99,7 +99,8 @@ Most of our interaction with ROS will be through the terminal or command line, s
   - `ros2 interface show <message/action-type>` to get information about a message or action
   
  - **General Commands**
- 	- `cd <directory-name>` to move to a different directory
+ 	- `ls` to list all directories and folder in current directory
+	- `cd <directory-name>` to move to a different directory
  	- `mkdir <directory-name> ` to create a new directory
  	- `touch <file-name>` to create a new file
  	- `git clone <repo-link>` to download a github repository  	
