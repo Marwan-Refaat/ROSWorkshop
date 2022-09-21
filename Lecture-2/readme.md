@@ -235,8 +235,8 @@ class talker(Node):
     def __init__(self):
     	#Create a node with name "talkerNode"
         super().__init__("talkerNode")
-        #Create a publisher to the "topic" topic
-        self.publisher = self.create_publisher(String,"topic",10)
+        #Create a publisher to the "myTopic" topic
+        self.publisher = self.create_publisher(String,"myTopic",10)
         
         #Define a timer_period variable
         timer_period = 0.5  # seconds
@@ -300,7 +300,7 @@ Inside our constructor function, we usually create our publishers and subscripti
     	#Create a node with name "talkerNode"
         super().__init__("talkerNode")
         #Create a publisher to the "topic" topic
-        self.publisher = self.create_publisher(String,"topic",10)
+        self.publisher = self.create_publisher(String,"myTopic",10)
         
         #Define a timer_period variable
         timer_period = 0.5  # seconds
@@ -366,7 +366,7 @@ class listener(Node):
 
     def __init__(self):
         super().__init__("listener")
-        self.subscriber = self.create_subscription(String,"topic",self.sub_callback,10)
+        self.subscriber = self.create_subscription(String,"myTopic",self.sub_callback,10)
 
     def sub_callback(self,msg):
     	#! Write your code here! 
@@ -399,7 +399,9 @@ It's now time to test our code. To run the code, open a new terminal and navigat
  
  To run your second script, open a new terminal window and repeat the same process, this time running the "listener" script.
  
- You should now be able to see the "talker" node's message being published on the `topic` topic and see the same message being printed to the terminal where your "listener" node is running.
+ You should now be able to see the "talker" node's message being published on the `myTopic` topic and see the same message being printed to the terminal where your "listener" node is running.
+ 
+ You can verify that the messages are being published to the correct topic by using the `ros2 topic list` and `ros2 topic echo` commands!
  
  ---
  
@@ -477,7 +479,7 @@ The lightring and buttons on the top of the robot are the primary way you can in
     /wheel_vels
 
     
-Since there are 10 robots here, you will find many topics being published by each robot. See if you can find the topics published by your robot (You can find your robot identifier on the top faceplate e.g: robot 1).
+Since there are multiple robots here, you will find that every node or topic your robot is running will be prepended by the robots name (i.e: `/robot-1/battery_state`). You can find your robot identifier on the top faceplate of the robot. For most of the commands in the workshop, you will need to prepend the commands with the correct robot name.
 
 If you still do not see the topics being published by your robot after a few minutes have passed ,or if your lightring turns into a color other than white, please ask for assistance.
  
@@ -554,7 +556,7 @@ You should now be able to see a similar output to the one below in your terminal
  
  Try sending following command in your terminal:
 
-    ros2 topic pub /cmd_lightring irobot_create_msgs/msg/LightringLeds "{override_system: true, leds: [{red: 255, green: 0, blue: 0}, {red: 0, green: 255, blue: 0}, {red: 0, green: 0, blue: 255}, {red: 255, green: 255, blue: 0}, {red: 255, green: 0, blue: 255}, {red: 0, green: 255, blue: 255}]}"
+    ros2 topic pub /robot-1/cmd_lightring irobot_create_msgs/msg/LightringLeds "{override_system: true, leds: [{red: 255, green: 0, blue: 0}, {red: 0, green: 255, blue: 0}, {red: 0, green: 0, blue: 255}, {red: 255, green: 255, blue: 0}, {red: 255, green: 0, blue: 255}, {red: 0, green: 255, blue: 255}]}"
 
  This should turn your robot's lightring into a colorful ring of colors.
  
@@ -564,7 +566,7 @@ You should now be able to see a similar output to the one below in your terminal
  
  To return the lightring to the default color, just send an empty message on the topic like so:
  
-     ros2 topic pub /cmd_lightring irobot_create_msgs/msg/LightringLeds "{}"
+     ros2 topic pub /robot-1/cmd_lightring irobot_create_msgs/msg/LightringLeds "{}"
 
  #### Task 3: Writing the code
  
@@ -635,6 +637,8 @@ if __name__ == '__main__':
 ```
     
  Now explore how you can now use the data from `ir_intensity` topic to change the lightring's colors accordingly. You can do whatever you want, like change it to red if the robot is close to any obstacle and green otherwise or maybe assign a color to each sensor's readings. 
+ 
+ **Note that you will need to change the topic names to reflect your robot's name (e.g: `ir_intensity` => `robot-1/ir_intensity`)**
  
  ## 2.2 ROS2 Actions
 
@@ -988,7 +992,7 @@ The action's result will simply be the duration it was active for, and its feedb
 
 We can now test out the action by sending the following command from the terminal, note the `--feedback` at the end which prints the action's feedback to the terminal
 
-    ros2 action send_goal led_animation irobot_create_msgs/action/LedAnimation "{animation_type: 0, lightring: {leds: [{red: 255, green: 0, blue: 0}, {red: 0, green: 255, blue: 0}, {red: 0, green: 0, blue: 255}, {red: 255, green: 255, blue: 0}, {red: 255, green: 0, blue: 255}, {red: 0, green: 255, blue: 255}], override_system: true},max_runtime: {sec: 500, nanosec: 0}}" --feedback
+    ros2 action send_goal /robot-1/led_animation irobot_create_msgs/action/LedAnimation "{animation_type: 0, lightring: {leds: [{red: 255, green: 0, blue: 0}, {red: 0, green: 255, blue: 0}, {red: 0, green: 0, blue: 255}, {red: 255, green: 255, blue: 0}, {red: 255, green: 0, blue: 255}, {red: 0, green: 255, blue: 255}], override_system: true},max_runtime: {sec: 500, nanosec: 0}}" --feedback
 
 #### 2 - Inspecting the `/interface_buttons` topic
 
@@ -996,17 +1000,17 @@ To use the buttons in our code, we need to be able to read the data from the `in
 
 Before echoing out the data from the topic, let's first explore its message type. We can find its message type using the `ros2 topic info` command like so:
 
-	ros2 topic info /interface_buttons
+	ros2 topic info /robot-1/interface_buttons
 
 Which should return an output that looks like this:
 
     Type: irobot_create_msgs/msg/InterfaceButtons
     Publisher count: 1
-    Subscription count: 1m
+    Subscription count: 1
 
 Let's echo the data from the topic like so:
 
-	ros2 topic echo /interface_buttons
+	ros2 topic echo /robot-1/interface_buttons
 
 You should see an output that looks something like this:
 
@@ -1136,6 +1140,7 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+  **Note that you will need to change the topic and action names to reflect your robot's name (e.g: `interface_buttons` => `robot-1/interface_buttons`)**
  
  #### 4 - Test your code!
  
