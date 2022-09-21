@@ -19,6 +19,10 @@ A description of `turtlesim` from the [ROS2 guide](https://docs.ros.org/en/foxy/
 
 ![turtlesim](https://docs.ros.org/en/rolling/_images/turtlesim.png)
 
+To install the turtlesim package, simply use the following command:
+
+	sudo apt install ros-galactic-turtlesim
+
 ## 2.1 Node - Topic Communication
 
 Node-topic communication is the most common communication paradigm used in ROS projects. It is most commonly used between nodes that publish/subscribe to continuous streams of data as is the case with most sensor data. 
@@ -35,6 +39,19 @@ Nodes can communicate with other nodes in a variety of ways, the most common met
 For this activity, we will be exploring a few ros2 commands that allow us to interact with and inspect nodes. 
 
 This activity can also be found in the ROS2 wiki [here](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html).
+
+#### Pre-Activity Note
+
+Before running any ROS nodes, we first need to make sure our environments are separated. Since all our devices are connected to the same network and are all running ROS2, our nodes can communicate with each other. In some cases, this is a very useful feature, but in our case it is an inconvenience as we can accidentally send commands to nodes on other devices as they will be using the same topic and node names.
+
+Fortunately, ROS2 provides a very easy way to separate ROS environments on the same network by setting the `ROS_DOMAIN_ID` environment variable. We can either set this environment variable every time we open a terminal by using `export ROS_DOMAIN_ID=x` or we can add it to the end of the `.bashrc` file, which is automatically executed everytime we open a new terminal. We can do just that like so:
+
+	echo 'export ROS_DOMAIN_ID=1' >> ~/.bashrc
+    source ~/.bashrc
+
+
+**WARNING: Be careful to change the id to a unqiue number ranging from 11-101 to avoid any misshaps**
+
 
 #### Command 1: ros2 run
 
@@ -448,7 +465,19 @@ The lightring and buttons on the top of the robot are the primary way you can in
  
  Then, place your robot on the charging dock with the front sensor facing the dock's sensor, you should see the robot's lightring turn on when you do this. Wait for around 2-3 minutes while the robot boots up and connects to the wifi network. You should hear two "happy" sounds from your robot, one when your robot boots up and another one when it successfully connects to wifi .
  
- You can test to see if your robot is successfully connected to the same network as you by  opening a new terminal window listing the current topics using `ros2 topic list` command as before
+ While the robot boots up, let's change our `ROS_DOMAIN_ID` variable to match that of our robots. Each group will have their own robot, and the robot's ID will match its number (i.e:`ROBOT 1` will have a `ROS_DOMAIN_ID` of 1). This time we can edit the file directly by using
+ 
+ 	sudo gedit ~/.bashrc
+    
+ Scroll down the last line and edit the following line accordingly:
+ 
+ 	export ROS_DOMAIN_ID=1
+  
+  Now source your new `.bashrc` file using:
+  
+  	source ~/.bashrc
+ 
+ You can test to see if your robot is successfully connected to the same network and with a matching domain id by  opening a new terminal window listing the current topics using `ros2 topic list` command as before
  
  You should now see an output similar to this 
  
@@ -659,6 +688,14 @@ In this activity, we will get get familiar with how exactly actions work by send
 
 **This activity can also be found in the [ROS2 docs](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html).**
 
+#### Pre-activity Note
+Just like before, we will need to change our domain ids back to the numbers we had at the beginning of the session by using:
+
+	sudo gedit ~/.bashrc
+    
+  And sourcing your new `.bashrc` file using:
+  
+  	source ~/.bashrc
 
 ### Tasks
 
@@ -928,6 +965,15 @@ Now that we are familiar with how actions work, it's time to apply them on the r
 
 The Create3 has a few actions already created out of the box that an be easily accessed using the concepts we already covered. You can check out all the actions [here](https://iroboteducation.github.io/create3_docs/api/ros2/) or by using the `ros2 action list` command when connected to the robot.
 
+
+#### Pre-activity Note
+Just like before, we will need to change our domain ids back to match the robot's ID by using:
+
+	sudo gedit ~/.bashrc
+    
+  And sourcing your new `.bashrc` file using:
+  
+  	source ~/.bashrc
 
  ### Tasks
  
