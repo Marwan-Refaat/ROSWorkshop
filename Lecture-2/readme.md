@@ -19,10 +19,6 @@ A description of `turtlesim` from the [ROS2 guide](https://docs.ros.org/en/foxy/
 
 ![turtlesim](https://docs.ros.org/en/rolling/_images/turtlesim.png)
 
-To install the turtlesim package, simply use the following command:
-
-	sudo apt install ros-galactic-turtlesim
-
 ## 2.1 Node - Topic Communication
 
 Node-topic communication is the most common communication paradigm used in ROS projects. It is most commonly used between nodes that publish/subscribe to continuous streams of data as is the case with most sensor data. 
@@ -39,19 +35,6 @@ Nodes can communicate with other nodes in a variety of ways, the most common met
 For this activity, we will be exploring a few ros2 commands that allow us to interact with and inspect nodes. 
 
 This activity can also be found in the ROS2 wiki [here](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html).
-
-#### Pre-Activity Note
-
-Before running any ROS nodes, we first need to make sure our environments are separated. Since all our devices are connected to the same network and are all running ROS2, our nodes can communicate with each other. In some cases, this is a very useful feature, but in our case it is an inconvenience as we can accidentally send commands to nodes on other devices as they will be using the same topic and node names.
-
-Fortunately, ROS2 provides a very easy way to separate ROS environments on the same network by setting the `ROS_DOMAIN_ID` environment variable. We can either set this environment variable every time we open a terminal by using `export ROS_DOMAIN_ID=x` or we can add it to the end of the `.bashrc` file, which is automatically executed everytime we open a new terminal. We can do just that like so:
-
-	echo 'export ROS_DOMAIN_ID=1' >> ~/.bashrc
-    source ~/.bashrc
-
-
-**WARNING: Be careful to change the id to a unqiue number ranging from 11-101 to avoid any misshaps**
-
 
 #### Command 1: ros2 run
 
@@ -461,23 +444,11 @@ The lightring and buttons on the top of the robot are the primary way you can in
  
  #### Task 0: Connecting to the robot
  
- To connect to the robot, you must be connected to the same wifi network as the robot. Make sure you are connected to the Hanze_IN01 network first.
+ To connect to the robot, you must be connected to the same wifi network as the robot. Make sure you are connected to the `linksys` network first.
  
  Then, place your robot on the charging dock with the front sensor facing the dock's sensor, you should see the robot's lightring turn on when you do this. Wait for around 2-3 minutes while the robot boots up and connects to the wifi network. You should hear two "happy" sounds from your robot, one when your robot boots up and another one when it successfully connects to wifi .
  
- While the robot boots up, let's change our `ROS_DOMAIN_ID` variable to match that of our robots. Each group will have their own robot, and the robot's ID will match its number (i.e:`ROBOT 1` will have a `ROS_DOMAIN_ID` of 1). This time we can edit the file directly by using
- 
- 	sudo gedit ~/.bashrc
-    
- Scroll down the last line and edit the following line accordingly:
- 
- 	export ROS_DOMAIN_ID=1
-  
-  Now source your new `.bashrc` file using:
-  
-  	source ~/.bashrc
- 
- You can test to see if your robot is successfully connected to the same network and with a matching domain id by  opening a new terminal window listing the current topics using `ros2 topic list` command as before
+ You can test to see if your robot is successfully connected to the same network as you by  opening a new terminal window listing the current topics using `ros2 topic list` command as before
  
  You should now see an output similar to this 
  
@@ -508,7 +479,7 @@ The lightring and buttons on the top of the robot are the primary way you can in
     /wheel_vels
 
     
-Since there are multiple robots here, you will find that every node or topic your robot is running will be prepended by the robots name (i.e: `/robot-1/battery_state`). You can find your robot identifier on the top faceplate of the robot. For most of the commands in the workshop, you will need to prepend the commands with the correct robot name.
+Since there are multiple robots here, you will find that every node or topic your robot is running will be prepended by the robots name (i.e: `/robot_1/battery_state`). You can find your robot identifier on the top faceplate of the robot. For most of the commands in the workshop, you will need to prepend the commands with the correct robot name.
 
 If you still do not see the topics being published by your robot after a few minutes have passed ,or if your lightring turns into a color other than white, please ask for assistance.
  
@@ -520,7 +491,7 @@ If you still do not see the topics being published by your robot after a few min
 
 Open a new terminal window and enter the following command,replacing robot-1 with your robot's number:
 
-	ros2 topic echo /robot-1/ir_intensity
+	ros2 topic echo /robot_1/ir_intensity
     
 You should now be able to see a similar output to the one below in your terminal window.
    
@@ -585,7 +556,7 @@ You should now be able to see a similar output to the one below in your terminal
  
  Try sending following command in your terminal:
 
-    ros2 topic pub /robot-1/cmd_lightring irobot_create_msgs/msg/LightringLeds "{override_system: true, leds: [{red: 255, green: 0, blue: 0}, {red: 0, green: 255, blue: 0}, {red: 0, green: 0, blue: 255}, {red: 255, green: 255, blue: 0}, {red: 255, green: 0, blue: 255}, {red: 0, green: 255, blue: 255}]}"
+    ros2 topic pub /robot_1/cmd_lightring irobot_create_msgs/msg/LightringLeds "{override_system: true, leds: [{red: 255, green: 0, blue: 0}, {red: 0, green: 255, blue: 0}, {red: 0, green: 0, blue: 255}, {red: 255, green: 255, blue: 0}, {red: 255, green: 0, blue: 255}, {red: 0, green: 255, blue: 255}]}"
 
  This should turn your robot's lightring into a colorful ring of colors.
  
@@ -596,10 +567,73 @@ You should now be able to see a similar output to the one below in your terminal
  To return the lightring to the default color, just send an empty message on the topic like so:
  
      ros2 topic pub /robot-1/cmd_lightring irobot_create_msgs/msg/LightringLeds "{}"
+     
+#### Task 3: Understanding message structure
 
- #### Task 3: Writing the code
+Before we can write our code to use these topics, we must understand the structure of each message since we will need to create them ourselves later in our code. This is a task you will have to do whenever you interact with a new topic or action, so try and understand this process well.
+
+Using the `ros2 interface show <interface-name>` command we can see the exact structure of our messages. For example, let's look at the message for the `ir_intensity` topic. 
+
+First, we can find out the message type using the `ros2 topic info <topic-name>` command:
+
+	ros2 topic info /robot_1/ir_intensity
  
- Using the same concepts we used in the talker-listener nodes we created before, we can create a simple node that subscribes to `ir_intensity` topic and publishes to the `cmd_lightring` topic like so:
+ You should see a message similar to this:
+ 
+ 	Insert ir_intensity info here
+    
+ As you can see above, the message type is `irobot_create_msgs`. Using this information, we can see the exact message structure like so:
+ 
+ 	ros2 interface show message-name
+    
+  Now you should be able to see the message structure. Note the fields it contains and their hierarchy.
+  
+  	Insert message_structure
+    
+ As you can see, the message consists of...
+ 
+ Now, let's see what this will look like in Python. Copy the code below in a new file and run it
+  
+  	python code here
+  
+ You should see it output a message similar to this
+ 
+ 	Python output here
+    
+ As you can see, this reflects what we saw in the terminal earlier. Note that this is at the end of the day just a standard Python dictionary, which means you can simply access the different fields like so:
+ 	
+    Insert python code here
+    
+ Now, let's do the same for the `cmd_lightring` topic. This time, the message type is `message-type`. Let's find out its structure
+ 
+ 	ros2 interface show <message-type>
+ 
+ This should return a similar message
+ 
+ 	message info
+ 
+ As you can see, the message has ... Note that it contains another message type named `LedColor`. Let's see what that looks like using the `ros2 interface show` command again:
+ 
+ 	message info
+ 
+ Note the structure of this message. Now, if we look back to the `lightring leds` message type, we can understand what a message should look like. Let's see what this looks like in Python. 
+ 
+ 	python code
+    
+ Running this code, we get the following:
+ 
+ 	python output
+    
+ Note that, again this just a Python dictionary, so we can easily interact with the messages. For example, if we wanted to send a message full of blue LEDs, we can simply do the following:
+ 
+ 	python code
+    
+ 
+Now, it's time to put all this together. 
+
+ #### Task 4: Writing the code
+ 
+ Using the same concepts we used in the talker-listener nodes we created before and what we learned about the message type, we can create a simple node that subscribes to `ir_intensity` topic and publishes to the `cmd_lightring` topic like so:
 
 ```python
 from rclpy.node import Node
@@ -688,14 +722,6 @@ In this activity, we will get get familiar with how exactly actions work by send
 
 **This activity can also be found in the [ROS2 docs](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html).**
 
-#### Pre-activity Note
-Just like before, we will need to change our domain ids back to the numbers we had at the beginning of the session by using:
-
-	sudo gedit ~/.bashrc
-    
-  And sourcing your new `.bashrc` file using:
-  
-  	source ~/.bashrc
 
 ### Tasks
 
@@ -965,15 +991,6 @@ Now that we are familiar with how actions work, it's time to apply them on the r
 
 The Create3 has a few actions already created out of the box that an be easily accessed using the concepts we already covered. You can check out all the actions [here](https://iroboteducation.github.io/create3_docs/api/ros2/) or by using the `ros2 action list` command when connected to the robot.
 
-
-#### Pre-activity Note
-Just like before, we will need to change our domain ids back to match the robot's ID by using:
-
-	sudo gedit ~/.bashrc
-    
-  And sourcing your new `.bashrc` file using:
-  
-  	source ~/.bashrc
 
  ### Tasks
  
