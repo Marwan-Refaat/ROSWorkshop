@@ -572,6 +572,7 @@ You should now be able to see a similar output to the one below in your terminal
 
 Before we can write our code to use these topics, we must understand the structure of each message since we will need to create them ourselves later in our code. This is a task you will have to do whenever you interact with a new topic or action, so try and understand this process well.
 
+##### Task 3.1: Inspecting the `ir_intensity` topic
 Using the `ros2 interface show <interface-name>` command we can see the exact structure of our messages. For example, let's look at the message for the `ir_intensity` topic. 
 
 First, we can find out the message type using the `ros2 topic info <topic-name>` command:
@@ -580,54 +581,138 @@ First, we can find out the message type using the `ros2 topic info <topic-name>`
  
  You should see a message similar to this:
  
- 	Insert ir_intensity info here
+ 	Type: irobot_create_msgs/msg/IrIntensityVector
+    Publisher count: 1
+    Subscription count: 0
+
     
- As you can see above, the message type is `irobot_create_msgs`. Using this information, we can see the exact message structure like so:
+ As you can see above, the message type is `irobot_create_msgs/msg/IrIntensityVector`. Using this information, we can see the exact message structure like so:
  
- 	ros2 interface show message-name
+ 	ros2 interface show irobot_create_msgs/msg/IrIntensityVector
     
   Now you should be able to see the message structure. Note the fields it contains and their hierarchy.
   
-  	Insert message_structure
+  	
+    std_msgs/Header header
+        builtin_interfaces/Time stamp
+            int32 sec
+            uint32 nanosec
+        string frame_id
+    irobot_create_msgs/IrIntensity[] readings
+        std_msgs/Header header
+            builtin_interfaces/Time stamp
+                int32 sec
+                uint32 nanosec
+            string frame_id
+        int16 value
+
     
- As you can see, the message consists of...
+ As you can see, the message consists of two top-level fields, a `header` field with type `std_msgs/Header` and a `readings` field with a type of `irobot_create_msgs/IrIntensity[]`. Note a few things here:
  
- Now, let's see what this will look like in Python. Copy the code below in a new file and run it
-  
-  	python code here
-  
- You should see it output a message similar to this
- 
- 	Python output here
+ - The `readings` field is an array
+ - The hierarchy of the fields is described by their indentation (e.g: The `value` field is a part of the `readings` field )
     
- As you can see, this reflects what we saw in the terminal earlier. Note that this is at the end of the day just a standard Python dictionary, which means you can simply access the different fields like so:
+ 
+ Now, let's see what this will look like in Python. Copy the simple subscriber code below in a new file and run it, making sure to change the topic name according to your namespace.
+
+```python
+from irobot_create_msgs.msg import IrIntensityVector
+import pprint 
+
+
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from irobot_create_msgs.msg import IrIntensityVector
+from rclpy.qos import ReliabilityPolicy, QoSProfile
+
+class ir_subscriber(Node):
+
+    def __init__(self):
+        super().__init__("ir_subscriber")
+        
+        #Subscribe to the ir_intensity topic, which has a message with type IrIntensityVector
+        self.irSubscriber = self.create_subscription(IrIntensityVector,"/robot_1/ir_intensity",self.ir_callback,QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT))
+        
+        
+    
+    def ir_callback(self,msg):
+        print('Message type is:',type(msg))
+        print('\n Header data is:', msg.header)
+        print('\n The readings data is:',msg.readings)
+        #! Write your code here!
+        #Print the value of the first element in the readings array
+   
+def main():
+    rclpy.init()
+
+    subcriberNode = ir_subscriber()
+
+    rclpy.spin_once(subcriberNode)
+
+if __name__ == '__main__':
+    main()
+```
+  
+ You should see it output a message similar to this:
+ 
+     Message type is: <class 'irobot_create_msgs.msg._ir_intensity_vector.IrIntensityVector'>
+
+     Header data is: std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='base_link')
+
+     The readings data is: [irobot_create_msgs.msg.IrIntensity(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='ir_intensity_side_left'), value=15), irobot_create_msgs.msg.IrIntensity(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='ir_intensity_left'), value=415), irobot_create_msgs.msg.IrIntensity(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='ir_intensity_front_left'), value=502), irobot_create_msgs.msg.IrIntensity(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='ir_intensity_front_center_left'), value=32), irobot_create_msgs.msg.IrIntensity(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='ir_intensity_front_center_right'), value=26), irobot_create_msgs.msg.IrIntensity(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='ir_intensity_front_right'), value=366), irobot_create_msgs.msg.IrIntensity(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=1664227973, nanosec=512763090), frame_id='ir_intensity_right'), value=2897)]
+    
+ As you can see, this reflects what we saw in the terminal earlier. In our case, the `msg` variable contains the message type, which we can see is of the same type we saw in the terminal before. We can also access the `header` and `readings` variables simply by `msg.header`and `msg.readings`, much like the way we can access a normal Python dictionary. 
+ 
+ Using that same logic, try accessing the value of the first element of the `readings` array.
+ 
+##### Task 3.2: Encore!
+    
+ Now, let's do the same for the `cmd_lightring` topic. Try creating a node  that turns the lightring completely blue. To save some time, you can use the boilerplate below:
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from irobot_create_msgs.msg import IrIntensityVector, LightringLeds, LedColor
+from rclpy.qos import ReliabilityPolicy, QoSProfile
+
+class lightController(Node):
+
+    def __init__(self):
+        super().__init__("lightController")
+        
+        #Publish to the cmd_lightring topic, which uses messages with type LightringLeds
+        self.lightringPublisher  = self.create_publisher(LightringLeds,"cmd_lightring",10)
+        
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        
+
+    def timer_callback(self):
+        #Initilaize message to correct message type
+        msg = LightringLeds()
+        msg.override_system = True #To override the default lightring settings
+        
+        #!Write your own code here!
+        #Set all 6 LEDs to blue
+
+        self.lightringPublisher.publish(msg)
+
+        print("Publishing...")
+    
+    
+
+def main():
+    rclpy.init()
+
+    controller = lightController()
+
+    rclpy.spin(controller)
+
+if __name__ == '__main__':
+    main()
+```
  	
-    Insert python code here
-    
- Now, let's do the same for the `cmd_lightring` topic. This time, the message type is `message-type`. Let's find out its structure
- 
- 	ros2 interface show <message-type>
- 
- This should return a similar message
- 
- 	message info
- 
- As you can see, the message has ... Note that it contains another message type named `LedColor`. Let's see what that looks like using the `ros2 interface show` command again:
- 
- 	message info
- 
- Note the structure of this message. Now, if we look back to the `lightring leds` message type, we can understand what a message should look like. Let's see what this looks like in Python. 
- 
- 	python code
-    
- Running this code, we get the following:
- 
- 	python output
-    
- Note that, again this just a Python dictionary, so we can easily interact with the messages. For example, if we wanted to send a message full of blue LEDs, we can simply do the following:
- 
- 	python code
-    
  
 Now, it's time to put all this together. 
 
@@ -1063,7 +1148,7 @@ To use the buttons in our code, we need to be able to read the data from the `in
 
 Before echoing out the data from the topic, let's first explore its message type. We can find its message type using the `ros2 topic info` command like so:
 
-	ros2 topic info /robot-1/interface_buttons
+	ros2 topic info /robot_1/interface_buttons
 
 Which should return an output that looks like this:
 
@@ -1073,7 +1158,7 @@ Which should return an output that looks like this:
 
 Let's echo the data from the topic like so:
 
-	ros2 topic echo /robot-1/interface_buttons
+	ros2 topic echo /robot_1/interface_buttons
 
 You should see an output that looks something like this:
 
