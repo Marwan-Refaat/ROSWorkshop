@@ -50,6 +50,8 @@ ROS2 is the second generation of ROS that is built from the ground-up to  to han
 #### 1.3.2 - Why ROS?
 
 ROS2’s development was and continues to be guided by a ‘Technical Steering Committee’ that consists of the juggernauts of the robotics and software development field today.  It contains the likes of Amazon, Toyota, Ubuntu, Microsoft, Samsung, iRobot, and many more.
+![ROS TSC](https://cdn.codeground.org/nsr/images/img/researchareas/openSource-article3_02.png)
+
 
 The presence of this technical committee and the current uses of ROS2 in the robotics field make ROS one of the most important tools to master for developers or engineers wanting to enter the field of robotics
 
@@ -58,6 +60,7 @@ ROS currently powers robots in various domains, from [Astrobee](https://www.nasa
 
 [ROSIndustrial](https://rosindustrial.org/) is an extension of the ROS platform specifically made to facilitate the transfer of robotics research into the industrial field. It currently boasts over 80 industrial leaders from all around the world such as ABB, Siemens, AWS, BMW, and many more. 
 
+![ROS Industrial Cosnortium](https://images.squarespace-cdn.com/content/v1/51df34b1e4b08840dcfd2841/5f2d08b4-2f38-41af-b19f-8fa90ff71a72/Logo-montage_2022-Sept1-wide-tp+copy-s.jpg?format=750w)
 
 ## 1.4 - An Overview of ROS
 
