@@ -1084,7 +1084,8 @@ The Create3 has a few actions already created out of the box that an be easily a
  
  #### 1 - Send an `led_animation` action
  One of the actions that the Create3 provides is the `led_animation` action, which allows us to create animations for the robot's lightring. 
-
+ 
+##### 1.1 - Inspecting the action
 Using the commands we learned before, we can find out exactly how this command should look like. We can use the following command to find out the type of the `led_animation` action like so:
 
 	ros2 action list -t
@@ -1141,9 +1142,73 @@ We can now test out the action by sending the following command from the termina
 
     ros2 action send_goal /robot-1/led_animation irobot_create_msgs/action/LedAnimation "{animation_type: 0, lightring: {leds: [{red: 255, green: 0, blue: 0}, {red: 0, green: 255, blue: 0}, {red: 0, green: 0, blue: 255}, {red: 255, green: 255, blue: 0}, {red: 255, green: 0, blue: 255}, {red: 0, green: 255, blue: 255}], override_system: true},max_runtime: {sec: 500, nanosec: 0}}" --feedback
 
+##### 1.2 Now, using Python
+
+Now, let's see what that looks like with Python!
+
+Using the concepts we learned before, send an `LedAnimation` action that makes the lightring blink blue for 5 seconds.
+
+Like before, you can copy the boilerplate code below and fill the code under the `#!Write your code here!` marker. 
+
+```python
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionClient
+from irobot_create_msgs.msg import LightringLeds, LedColor
+from irobot_create_msgs.action import LedAnimation
+
+class animationController(Node):
+
+    def __init__(self):
+        super().__init__("animationController")
+        
+        #Create an action client that sends an action of type LedAnimation to the action server led_animation
+        self.action_client = ActionClient(self, LedAnimation, '/robot_1/led_animation')
+
+
+    def send_goal(self):
+    	#Initialize an empty LedAnimation action tyoe
+        animationGoal = LedAnimation.Goal()
+        
+        #!Write your code here!
+
+        ##Set Animation Type (1 for blinking, 2 for spinning)
+        
+        ## Set Runtime for the animation
+		
+        ##Create an empty lightring message
+        
+        ##Set the lightring colors
+        
+        
+        #Wait for an action server to become available
+        self.action_client.wait_for_server()
+        
+        print("Publishing Goal!")
+
+        #Send the goal
+        return self.action_client.send_goal_async(animationGoal)
+    
+        
+
+def main():
+    rclpy.init()
+
+    controller = animationController()
+    controller.send_goal()
+
+    rclpy.spin(controller)
+
+if __name__ == '__main__':
+    main()
+
+```
+
+
 #### 2 - Inspecting the `/interface_buttons` topic
 
 To use the buttons in our code, we need to be able to read the data from the `interface_buttons` topic.
+
 
 Before echoing out the data from the topic, let's first explore its message type. We can find its message type using the `ros2 topic info` command like so:
 
@@ -1211,6 +1276,8 @@ You should see an output that looks something like this:
 As you can see, the topic provides us with the pressed state of all the interface buttons, the time they were last pressed, as well as the duration they were pressed for. This information can allow us to create logic for various types of button presses (e.g Hold vs Press) and even multi-button actions.
 
 For our case, we will simply be checking the `is_pressed` state to check if the button is currently pressed. Try pressing different buttons and see how the message changes accordingly.
+ 
+ Before moving on to creating the code, try using the `ros2 interface show <interface_type>` to find out the exact structure of the message being sent on this topic.
  
 #### 3 - Write the node!
  
@@ -1287,7 +1354,7 @@ def main():
 if __name__ == '__main__':
     main()
 ```
-  **Note that you will need to change the topic and action names to reflect your robot's name (e.g: `interface_buttons` => `robot-1/interface_buttons`)**
+  **Note that you will need to change the topic and action names to reflect your robot's name (e.g: `interface_buttons` => `robot_1/interface_buttons`)**
  
  #### 4 - Test your code!
  
@@ -1298,7 +1365,16 @@ if __name__ == '__main__':
  
  Now try pressing the buttons on your robot and see your code in action!
  
+ --- 
  
+ ### 2.3 - Recap!
+ 
+ 
+ By this point, we have covered the two most common ways ROS nodes can interact with one another, topics and actions!
+ 
+ Using a combination of these two communication paradigms, we can create complex robotics projects, as well as work with the nodes provided by ROS packages, exponentially extending our projects' capabilities! 
+ 
+ We will be covering how we can download and add ROS packages to our projects in the next lecture, as well as cover a few of the most prominent ones.
  
  
  
