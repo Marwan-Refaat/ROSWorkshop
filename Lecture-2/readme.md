@@ -434,7 +434,7 @@ The front of the robot features a bumper with seven pairs of IR proximity sensor
 
 The bottom of the robot includes four cliff sensors to keep the robot on solid ground, a front caster wheel, charging contacts, two wheels with current sensors and encoders, and an optical odometry sensor. The create3 also includes an onboard IMU, which is used with the optical odometry sensor and wheel encoders to generate a fused odometry estimate.
 
-This section is an excerpt from the [create3 docs](https://iroboteducation.github.io/create3_docs/hw/overview/), head over there if you want to fnd out more about the robot
+This section is an excerpt from the [create3 docs](https://iroboteducation.github.io/create3_docs/hw/overview/), head over there if you want to find out more about the robot
 
 ##### Lightring and Buttons
 
@@ -566,7 +566,7 @@ You should now be able to see a similar output to the one below in your terminal
  
  To return the lightring to the default color, just send an empty message on the topic like so:
  
-     ros2 topic pub /robot-1/cmd_lightring irobot_create_msgs/msg/LightringLeds "{}"
+     ros2 topic pub /robot_1/cmd_lightring irobot_create_msgs/msg/LightringLeds "{}"
      
 #### Task 3: Understanding message structure
 
@@ -617,7 +617,6 @@ First, we can find out the message type using the `ros2 topic info <topic-name>`
 
 ```python
 from irobot_create_msgs.msg import IrIntensityVector
-import pprint 
 
 
 import rclpy
