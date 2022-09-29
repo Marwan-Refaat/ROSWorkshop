@@ -228,12 +228,66 @@ If you open the Gazebo window, you will see that the robot is currently in an em
  
  RViz is used to visualize all kinds of robot data, from sensor data to actuators. A very important distinction to make is that unlike Gazebo, *RViz does not output any data on its own*, it just visualizes already existing data
  
- ### 3.3.3 Activity: Visualizing sensor data using RVIZ
+ ### 3.3.3 Activity: Visualizing tf data using RVIZ
+ 
+ #### Background: TF
+ In all robotics applications, keeping track of various objects' locations in relation to both one another and to their environment is an essential, yet  complex, task. For example, in the case below, a camera can locate the objects relative to its own coordinate frame. However, this information is not useful to the robot unless it is related to its base coordinate frame (i.e: it is not enough to know the objects are 1 meter away from camera, the robot needs to know where the objects are in the room!). 
  
  
- In this activity, we will use RViz to visualize a few types of sensor data, as well as monitor the differences between the robot's percieved pose and its actual pose.
+ ![robot-with-camera](https://www.researchgate.net/profile/Abdullah-Alhusin-Alkhdur/publication/266205716/figure/fig2/AS:541426788569090@1506097613336/Relationships-between-coordinate-systems-To-construct-the-3D-models-a-coordinate-frame.png)
  
+ Often times, there will be at least 5 different coordinate frames in a robotic application. Maintaining the unique transformations from and to each of these frames, especially when they might be constantly changing, is no easy task.
  
+ ROS provides a package that optimizes this process. A description of the `tf` package from the [ros wiki](http://wiki.ros.org/tf):
+ > tf is a package that lets the user keep track of multiple coordinate frames over time. tf maintains the relationship between coordinate frames in a tree structure buffered in time, and lets the user transform points, vectors, etc between any two coordinate frames at any desired point in time.
+ 
+ **Note that with ROS2, `tf2` is the supported transform package, you can read all the changes [here](http://wiki.ros.org/tf2/Migration)**
+ 
+ #### Task1: Using `tf2` tools
+ 
+An easy and quick way to see your tf tree from the command line is to use the tools provided by the `tf2` package.
+
+Install the `tf2` package with the following:
+
+	sudo apt-get install ros-galactic-turtle-tf2-py ros-galactic-tf2-tools 	ros-galactic-tf-transformations
+    
+ Then, run the following command to collect a snapshot of your tf data and save it to a pdf:
+ 	
+    ros2 run tf2_tools view_frames
+    
+Finally, view your tf tree:
+
+	evince frames.pdf
+    
+ You should now see an image similar to this:
+ 
+ ![Screenshot from 2022-09-30 00-19-42](https://user-images.githubusercontent.com/71664900/193152322-9e61b472-159d-49a1-906b-5905c6cdee9a.png)
+
+ Scroll through the pdf to see all the different frames that make up the Create3. Next, we will see where they are exactly on the robot with RViz!
+ 
+ #### Task 2: Now with RViz!
+ In this activity, we will use RViz to visualize a the transforms published by the Create3.
+ 
+ Open two new terminal windows, making sure to source your `ros2_ws`, and launch the following launch files:
+
+```bash 
+ros2 launch irobot_create_common_bringup rviz2.launch.py
+```
+
+
+```bash
+ros2 launch irobot_create_common_bringup robot_description.launch.py
+```
+You should now see an RViz window open that looks similar to this:
+
+![Screenshot from 2022-09-30 00-03-36](https://user-images.githubusercontent.com/71664900/193150412-f522ef0c-5c64-4dc9-a56b-1500eb48a018.png)
+
+
+To see the Create3's frames visualized in RViz, you can click on the checkbox next to the "TF" option. Take a minute to play around with the options and see where each coordinate frame lies on the robot.
+
+![Screenshot from 2022-09-30 00-22-16](https://user-images.githubusercontent.com/71664900/193152601-476d9fec-1583-48c3-8873-d80d8fd752e9.png)
+ As you can see, the number of frames can be quite visually overwhelming. Try disabling a few of the frames from by unchecking a few of the checkboxes under the 'frames' menu
+
  ## 3.4 Launch Files
  Launch files are one of ROS' most useful features. Launch files allow us to run multiple nodes at once, and even what arguments to pass them on startup. This allows us to launch a complete application with whatever configuration we need from a single file.
  
