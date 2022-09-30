@@ -91,13 +91,14 @@ This is the basic skeleton of any ROS2 workspace. You can add any source code or
 
 Now we will clone a few packages that we will need to use alongside our package. We will go into detail of what these packages include in a later section.
 
-We will be cloning the Create3 simulation packages, you can find their repo [here](https://github.com/iRobotEducation/create3_sim). 
+We will be cloning the [Create3 simulation]([here](https://github.com/iRobotEducation/create3_sim)) and [Create3 examples](https://github.com/iRobotEducation/create3_examples) packages from their respective Github repos. 
 
 
-Navigate to your workspace's`src` and clone the package from Github:
+Navigate to your workspace's`src` directory and clone the package from Github:
 
 	cd ~/ros2_ws/src
     git clone https://github.com/iRobotEducation/create3_sim
+    git clone https://github.com/iRobotEducation/create3_examples
 
 Wait for the download to complete, then proceed to the next step.
 
@@ -317,7 +318,9 @@ To see the Create3's frames visualized in RViz, you can click on the checkbox ne
  	
    	touch turtlesim_teleop_launch.xml
     
-    
+ We will also need to install the `xterm` package for this exercise, so install it now as well:
+ 	
+    sudo apt install xterm
 #### 1 - Write the launch file!
 
 
@@ -327,8 +330,129 @@ Copy and paste the code below into your launch files:
 
 ```xml
 <launch>
+  <node pkg="turtlesim" exec="turtle_teleop_key" output="screen" launch-prefix="xterm -e"/>
   <node pkg="turtlesim" exec="turtlesim_node"/>
-  <node pkg="turtlesim" exec="turtle_teleop_key"/>
-  </launch>
 </launch>
 ```
+
+As you can see, the syntax for launch files is relatively intuitive. You can find out a lot more of what launch files are capable of by following the [ros2 tutorials here](https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Launch-Main.html)
+
+#### 2- Launch!
+
+If you recall, the syntax for using launch files looks something like this:
+
+	ros2 launch <package_name> <launch_file_name>
+    
+ But in our case, since this launch file is not part of a package, we can launch it directly like so:
+  
+  	cd ~/ros2_ws/src/launch
+    ros2 launch turtlesim_teleop_launch.xml
+    
+ You should now be able to see two windows, one for the teleop node, and one for the turtlesim node:
+ 
+ ![Screenshot from 2022-09-30 10-37-17](https://user-images.githubusercontent.com/71664900/193229137-f8a475d2-76ee-481a-8b7d-f22364c88806.png)
+ ---
+
+### 3.5 -  Rosbags
+
+As you might have noticed, data sent over topics is not inherently persistent. If a message is not captured by a node, there is no way for it to be replayed back or stored. Although this behaviour is useful in many ways, sometimes data persistence is necessary. For example, when optimizing or testing algorithms, it can be very useful to capture data once during a data collection phase, and using that data later for optimizing algorithms or as training data
+
+Fortunately, ROS provides a utility that allows for easy data persistence!
+
+The `rosbag` utility allows you to store and replay topic data through the CLI commands.
+
+You can find out all about the package again through the  [ros2 tutorials here](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html).
+
+### 3.5.1 - A `rosbag` demo
+
+In this very short demo, we will try recording a few topics in turtlesim using the `rosbag2` package and replay them back in real time
+
+This activity can be found on the ROS2 wiki [here](https://docs.ros.org/en/galactic/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html)
+
+#### Task 0 - Setup
+
+Download the `rosbags2` package like so:
+	
+    sudo apt-get install ros-galactic-ros2bag \ros-galactic-rosbag2-storage-default-plugins
+    
+Then create a directory for your rosbag files to go
+
+	mkdir ~/rosbag_demo
+    cd ~/rosbag_demo
+    
+Now, run the turtlesim and turtle_teleop nodes
+
+```bash 
+ros2 run turtlesim turtlesim_node 
+```
+```bash 
+ros2 run turtlesim turtle_teleop_key 
+```    
+    
+#### Task 1 - Record a topic
+
+In our example, we will record the `/turtle1/cmd_vel` topic, which contains all the velocity commands for turtlesim
+
+To record a topic, we can use the following syntax
+
+	ros2 bag record <topic_name>
+    
+ or to record multiple topics:
+ 
+ 	ros2 bag record <topic1_name> <topic2_name> 
+
+You can also add a custom name using the `-o` flag like so:
+
+	ros2 bag record -o <file_name> <topic_name>
+    
+ In our case, we will record the `/turtle1/cmd_vel` like so:
+ 
+      ros2 bag record -o turtle_movement /turtle1/cmd_vel
+    
+  You should now see a similar screen:
+  
+  ```bash
+  [INFO] [1664530714.080295473] [rosbag2_storage]: Opened database 'rosbag2_2022_09_30-11_38_34/rosbag2_2022_09_30-11_38_34_0.db3' for READ_WRITE.
+[INFO] [1664530714.080414474] [rosbag2_recorder]: Listening for topics...
+[WARN] [1664530714.081898406] [rosbag2_transport]: Hidden topics are not recorded. Enable them with --include-hidden-topics
+[INFO] [1664530714.083271733] [rosbag2_recorder]: Subscribed to topic '/turtle1/cmd_vel'
+[INFO] [1664530714.083715109] [rosbag2_recorder]: All requested topics are subscribed. Stopping discovery...
+```
+Now, switch to your teleop terminal, and move the turtle in a pattern that you can recognize later. When you are done, press `CTRL+C` to end the recording.
+
+
+#### Task 2 - Inspect the rosbag
+
+You can find out information about the exact data stored inside the rosbag by using the command `rosbag info <bag_name>`
+
+To inspect the rosbag we just recorded:
+	
+    ros2 bag info turtle_movement
+
+You should see something similar to this
+```bash
+Files:             turtle_movement_0.db3
+Bag size:          16.8 KiB
+Storage id:        sqlite3
+Duration:          3.697s
+Start:             Sep 30 2022 11:44:08.242 (1664531048.242)
+End:               Sep 30 2022 11:44:11.940 (1664531051.940)
+Messages:          28
+Topic information: Topic: /turtle1/cmd_vel | Type: geometry_msgs/msg/Twist | Count: 28 | Serialization Format: cdr
+
+```
+This shows you information about the exact topics recorded, their message types, the duration of the recording as well as some metadata about the bag itself like its size.
+
+#### Task 3 - Replay the files!
+
+Now we can replay our recorded topic data by simply running the following command:
+
+	ros2 bag play turtle_movement
+    
+ If you have the turltesim window still open, you should now be seeing that your turtle repeat the same pattern you played before!
+ 
+ These same concepts can of course be applied to any ros topic. Common use cases include collecting sensor data for training, optimizing, or testing sensor fusion algorithms.
+ 
+ 
+ 
+
