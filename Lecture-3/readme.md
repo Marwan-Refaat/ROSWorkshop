@@ -7,7 +7,6 @@ By the end of this lecture you should be able to:
 - Create and build custom packages using the `colcon` build tool
 - Create custom launch files for your projects
 - Use RVIZ and Gazebo to simulate the Create3 robot
-- Create a complex package that combines all the concepts we have learned so far!
 
 ## 3.1 - ROS Packages
 
