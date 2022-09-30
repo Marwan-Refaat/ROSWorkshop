@@ -235,7 +235,7 @@ If you open the Gazebo window, you will see that the robot is currently in an em
  In all robotics applications, keeping track of various objects' locations in relation to both one another and to their environment is an essential, yet  complex, task. For example, in the case below, a camera can locate the objects relative to its own coordinate frame. However, this information is not useful to the robot unless it is related to its base coordinate frame (i.e: it is not enough to know the objects are 1 meter away from camera, the robot needs to know where the objects are in the room!). 
  
  
- ![robot-with-camera](https://www.researchgate.net/profile/Abdullah-Alhusin-Alkhdur/publication/266205716/figure/fig2/AS:541426788569090@1506097613336/Relationships-between-coordinate-systems-To-construct-the-3D-models-a-coordinate-frame.png)
+ ![Relationships-between-coordinate-systems-To-construct-the-3D-models-a-coordinate-frame](https://user-images.githubusercontent.com/71664900/193244415-acfac6e1-fd92-419a-b565-e32db0f348b5.png)
  
  Often times, there will be at least 5 different coordinate frames in a robotic application. Maintaining the unique transformations from and to each of these frames, especially when they might be constantly changing, is no easy task.
  
