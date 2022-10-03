@@ -77,7 +77,7 @@ Since ROS is designed to be very modular, a robot control system is broken down 
 Nodes communicate using messages. A ROS message is just a data structure that contains one or more fields. These fields usually have a type belonging to one of the primitive data types (Integer, Floating Point, Boolean). Messages can also include arrays and may be nested to add hierarchy or separation to the data.
 
 #### 1.4.4 - Topics
-ROS messages are sent through topics, which follow a simple publish/subscribe protocol. Nodes can publish messages to a topic to share that data across the application, and other nodes can subscribe to that topic to access that data. A single topic can have multiple subscribers but only a single publisher.  For example, node /lidar_sensor might process data from the lidar sensor and publish distance data to a topic called /distance_data. The /localization node subscribed to the /distance_data topic can use that data to help compute the robot’s current location
+ROS messages are sent through topics, which follow a simple publish/subscribe protocol. Nodes can publish messages to a topic to share that data across the application, and other nodes can subscribe to that topic to access that data. A single topic can have multiple subscribers and multiple publishers.  For example, node /lidar_sensor might process data from the lidar sensor and publish distance data to a topic called /distance_data. The /localization node subscribed to the /distance_data topic can use that data to help compute the robot’s current location
 
 ![Multiple node-topic communication](https://docs.ros.org/en/foxy/_images/Topic-MultiplePublisherandMultipleSubscriber.gif)
 
